@@ -10,23 +10,52 @@
 // we're pre-adding items to the shopping list so there's
 // something to see when the page first loads.
 const STORE = [
-  {name: 'apples', checked: false},
-  {name: 'oranges', checked: false},
-  {name: 'milk', checked: true},
-  {name: 'bread', checked: false}
+  {id: cuid(), name: 'apples', checked: false},
+  {id: cuid(), name: 'oranges', checked: false},
+  {id: cuid(), name: 'milk', checked: true},
+  {id: cuid(), name: 'bread', checked: false}
 ];
 
+function generateItemHTML(item){
+  return `
+  <li data-item-id="${item.id}"> <span class="shopping-item ${item.checked ? 'shopping-item__checked' : ''}">${item.name}</span> <div class="shopping-item-controls"> <button class="shopping-item-toggle js-item-toggle"> <span class="button-label">check</span> </button> <button class="shopping-item-delete js-item-delete"> <span class="button-label">delete</span> </button> </div> </li>
+  `;
+}
+
+function generateItemsHTML(arr){
+  const htmlArr = arr.map(generateItemHTML);
+  return htmlArr.join('');
+}
+
+function generateItem(item){
+  return {id: cuid(), name: item, checked: false};
+}
+
+function addItemToShoppingList(item){
+  STORE.push(generateItem(item));
+}
 
 function renderShoppingList() {
   // this function will be responsible for rendering the shopping list in
   // the DOM
   console.log('`renderShoppingList` ran');
+  const htmlString = generateItemsHTML(STORE);
+  $('.js-shopping-list').html(htmlString);
+
 }
 
 
 function handleNewItemSubmit() {
   // this function will be responsible for when users add a new shopping list item
   console.log('`handleNewItemSubmit` ran');
+  $('#js-shopping-list-form').on('submit',function(e){
+    console.log('Submitting...');
+    e.preventDefault();
+    console.log(e);
+    addItemToShoppingList($('.js-shopping-list-entry').val());
+    $('.js-shopping-list-entry').val('');
+    renderShoppingList();
+  });
 }
 
 
@@ -34,6 +63,9 @@ function handleItemCheckClicked() {
   // this function will be responsible for when users click the "check" button on
   // a shopping list item.
   console.log('`handleItemCheckClicked` ran');
+  $('.js-shopping-list').on('click','.shopping-item-toggle',function(e){
+
+  });
 }
 
 
