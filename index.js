@@ -1,4 +1,5 @@
 'use strict';
+/*global cuid*/
 
 // `STORE` is responsible for storing the underlying data
 // that our app needs to keep track of in order to work.
@@ -35,6 +36,23 @@ function addItemToShoppingList(item){
   STORE.push(generateItem(item));
 }
 
+function getItemIdFromElement(element){
+  return $(element)
+    .closest('li')
+    .data('item-id');
+}
+
+function toggleCheckedForListItem(id){
+  const item = STORE.find(item => item.id === id);
+  item.checked = !item.checked; 
+}
+
+function deleteItemFromList(id){
+  const index = STORE.findIndex(item => item.id === id);
+  if (index === -1) return;
+  STORE.splice(index,1);
+}
+
 function renderShoppingList() {
   // this function will be responsible for rendering the shopping list in
   // the DOM
@@ -63,8 +81,10 @@ function handleItemCheckClicked() {
   // this function will be responsible for when users click the "check" button on
   // a shopping list item.
   console.log('`handleItemCheckClicked` ran');
-  $('.js-shopping-list').on('click','.shopping-item-toggle',function(e){
-
+  $('.js-shopping-list').on('click','.js-item-toggle',function(e){
+    const id = getItemIdFromElement(e.currentTarget);
+    toggleCheckedForListItem(id);
+    renderShoppingList();
   });
 }
 
@@ -73,6 +93,13 @@ function handleDeleteItemClicked() {
   // this function will be responsible for when users want to delete a shopping list
   // item
   console.log('`handleDeleteItemClicked` ran');
+  $('.js-shopping-list').on('click','.js-item-delete',function(e){
+    const id = getItemIdFromElement(e.currentTarget);
+    console.log(id);
+    deleteItemFromList(id);
+    console.log(STORE);
+    renderShoppingList();
+  });
 }
 
 // this function will be our callback when the page loads. it's responsible for
